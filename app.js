@@ -1,8 +1,21 @@
+<<<<<<< HEAD
 import express from 'express';
 import dotenv from 'dotenv';
 import dbConnection from './config/dbConnection.js';
 import authRoute from './routes/authRoute.js';
 
+=======
+// dependencies
+import express from 'express';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+
+//db connection
+import dbConnection from './config/dbConnection.js';
+
+//router
+import authRoute from './routes/authRoute.js';
+>>>>>>> origin/VOL-3/auth-controller
 dotenv.config();
 
 const app = express();
@@ -20,6 +33,10 @@ app.get('/', (req, res) => {
     res.send('api ready');
 });
 // Routes
+<<<<<<< HEAD
 app.use('/api/auth', authRoute);
+=======
+app.use('/api/v1/auth', authRoute);
+>>>>>>> origin/VOL-3/auth-controller
 
 startServer();
