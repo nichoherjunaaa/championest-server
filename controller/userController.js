@@ -1,7 +1,6 @@
 import User from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -30,50 +29,43 @@ const createSendResToken = (user, statusCode, res) => {
 };
 
 const userRegister = asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
+    const isAdmin = (await User.countDocuments()) === 0
+    const role = isAdmin ? 'admin' : 'client'
 
-    if (!username || !email || !password) {
-        res.status(400);
-        throw new Error('Semua field wajib diisi');
-    }
+    const createUser = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        role
+    })
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        res.status(400);
-        throw new Error('Email sudah digunakan');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, email, password: hashedPassword });
-    
-    createSendResToken(user, 201, res);
+    createSendResToken(createUser, 201, res)
 });
 
 const userLogin = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-
+    const { email, password } = req.body
     if (!email || !password) {
-        res.status(400);
-        throw new Error('Email dan password harus diisi');
+        res.status(400)
+        throw new Error('Email dan Password harus diisi')
     }
 
-    const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-        res.status(401);
-        throw new Error('Email atau password salah');
+    const userFound = await User.findOne({ email: email })
+    if (userFound && (await userFound.comparePassword(password))) {
+        createSendResToken(userFound, 200, res)
+    } else {
+        res.status(400)
+        throw new Error('Email atau Password salah')
     }
-
-    createSendResToken(user, 200, res);
-});
+})
 
 const getUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
-    if(user){
+    if (user) {
         res.status(200).json({
             data: user
         });
     }
-    else{
+    else {
         res.status(404);
         throw new Error('User tidak ditemukan');
     }
@@ -96,11 +88,11 @@ const getUserById = asyncHandler(async (req, res) => {
 const logoutUser = async (req, res) => {
     res.cookie('jwt', "", {
         httpOnly: true,
-        expires : new Date(Date.now())
+        expires: new Date(Date.now())
     })
-    res.status(200).json({ 
-        success: true, 
-        message: 'Logout Berhasil' 
+    res.status(200).json({
+        success: true,
+        message: 'Logout Berhasil'
     })
 }
 

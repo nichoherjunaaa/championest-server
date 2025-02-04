@@ -22,10 +22,10 @@ export const protectedMiddleware = asyncHandler(async (req, res, next) => {
 })
 
 export const isAdminMiddleware = (req, res, next) => {
-    if (req.user && req.user.role === 'owner') {
+    if (req.user && req.user.role === 'admin') {
         next()
     } else {
         res.status(401)
-        throw new Error('Not authorized as an owner')
+        throw new Error('Not authorized as an admin')
     }
 }

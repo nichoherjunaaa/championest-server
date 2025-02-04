@@ -10,6 +10,7 @@ import dbConnection from './config/dbConnection.js';
 // Routes
 import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
+import orderRoute from './routes/orderRoute.js';
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/product', productRoute);
+app.use('/api/v1/order', orderRoute);
 
 startServer();

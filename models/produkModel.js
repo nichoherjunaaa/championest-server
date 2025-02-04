@@ -3,10 +3,11 @@ import mongoose from 'mongoose';
 var produkSchema = new mongoose.Schema({
     nama:{
         type:String,
-        required:[true, 'Nama harus diisi']
+        required:[true, 'Nama harus diisi'],
+        unique:[true, 'Nama sudah terdaftar']
     },
     harga:{
-        type:String,
+        type:Number,
         required:[true, 'Harga harus diisi']
     },
     deskripsi:{
@@ -15,11 +16,11 @@ var produkSchema = new mongoose.Schema({
     },
     stok:{
         type:Number,
-        required:[true, 'Stok harus diisi']
+        default : 0
     },
     gambar:{
         type:String,
-        required:[true, 'Gambar harus diisi']
+        default : null
     }
 });
 
