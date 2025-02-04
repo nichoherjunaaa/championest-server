@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-const userLogin = async (req, res) => {
-    res.send('login success');
-};
-
-const userRegister = async (req, res) => {
-    res.send('register success');
-};
-
-const getUser = async (req, res) => {
-    res.send('get user success');
-};
-
-const getUserById = async (req, res) => {
-    res.send('get user by id success');
-};
-
-
-
-export { userLogin, userRegister, getUser, getUserById };
-=======
 import User from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
@@ -75,7 +54,7 @@ const userLogin = asyncHandler(async (req, res) => {
 
     if (!email || !password) {
         res.status(400);
-        throw new Error('Email dan password wajib diisi');
+        throw new Error('Email dan password harus diisi');
     }
 
     const user = await User.findOne({ email });
@@ -88,12 +67,16 @@ const userLogin = asyncHandler(async (req, res) => {
 });
 
 const getUser = asyncHandler(async (req, res) => {
-    const users = await User.find().select('-password');
-    res.status(200).json({
-        status: 'success',
-        results: users.length,
-        data: users
-    });
+    const user = await User.findById(req.user.id).select('-password');
+    if(user){
+        res.status(200).json({
+            data: user
+        });
+    }
+    else{
+        res.status(404);
+        throw new Error('User tidak ditemukan');
+    }
 });
 
 const getUserById = asyncHandler(async (req, res) => {
@@ -122,4 +105,3 @@ const logoutUser = async (req, res) => {
 }
 
 export { userLogin, userRegister, getUser, getUserById, logoutUser };
->>>>>>> origin/VOL-3/auth-controller

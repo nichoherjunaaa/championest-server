@@ -1,19 +1,12 @@
-<<<<<<< HEAD
-import { userLogin, userRegister, getUser, getUserById } from "../controller/userController.js";
-=======
 import { userLogin, userRegister, getUser, getUserById, logoutUser } from "../controller/userController.js";
->>>>>>> origin/VOL-3/auth-controller
 import express from "express";
+import {protectedMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post("/register", userRegister);
 router.post("/login", userLogin);
-router.get("/", getUser)
-router.get("/:id", getUserById)
-<<<<<<< HEAD
-=======
-router.delete('/logout', logoutUser)
->>>>>>> origin/VOL-3/auth-controller
+router.get("/", protectedMiddleware, getUser)
+router.delete("/logout", protectedMiddleware, logoutUser)
 
 export default router;
 

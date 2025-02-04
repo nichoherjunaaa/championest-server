@@ -1,25 +1,22 @@
-<<<<<<< HEAD
 import express from 'express';
 import dotenv from 'dotenv';
-import dbConnection from './config/dbConnection.js';
-import authRoute from './routes/authRoute.js';
-
-=======
-// dependencies
-import express from 'express';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
-
-//db connection
-import dbConnection from './config/dbConnection.js';
-
-//router
-import authRoute from './routes/authRoute.js';
->>>>>>> origin/VOL-3/auth-controller
+import cookieParser from 'cookie-parser'
 dotenv.config();
 
+
+// Database connection
+import dbConnection from './config/dbConnection.js';
+
+// Routes
+import authRoute from './routes/authRoute.js';
+import productRoute from './routes/productRoute.js';
+
 const app = express();
+
+// Middleware
 app.use(express.json());
+app.use(cookieParser())
+
 const PORT = process.env.PORT || 3001;
 
 const startServer = async () => {
@@ -33,10 +30,7 @@ app.get('/', (req, res) => {
     res.send('api ready');
 });
 // Routes
-<<<<<<< HEAD
-app.use('/api/auth', authRoute);
-=======
 app.use('/api/v1/auth', authRoute);
->>>>>>> origin/VOL-3/auth-controller
+app.use('/api/v1/product', productRoute);
 
 startServer();
