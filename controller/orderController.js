@@ -28,15 +28,33 @@ export const createOrder = asyncHandler(async (req, res) => {
 });
 
 export const getOrders = asyncHandler(async(req, res) => {
-    res.send('order get')
+    const allOrders = await Order.find();
+
+    res.status(200).json({
+        status: 'success',
+        data: allOrders
+    })
 })
 
 export const detailOrder = asyncHandler(async(req, res) => {
-    res.send('order detail')
+    const order = await Order.findById(req.params.id)
+    if (!order) {
+        res.status(404);
+        throw new Error('Pesanan tidak ditemukan');
+    }
+    res.status(200).json({
+        status:'success',
+        data: order
+    })
 })
 
 export const curentAuthOrder = asyncHandler(async(req, res) => {
-    res.send('order current auth')
+    const order = await Order.find({user: req.user.id})
+
+    res.status(200).json({
+        status: 'success',
+        data: order
+    })
 })
 
 

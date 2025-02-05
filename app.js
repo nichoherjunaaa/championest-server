@@ -12,9 +12,11 @@ import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
 import orderRoute from './routes/orderRoute.js';
 
+// Middleware
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser())
 
@@ -34,5 +36,9 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/product', productRoute);
 app.use('/api/v1/order', orderRoute);
+
+// Middleware
+app.use(notFound);
+app.use(errorHandler);
 
 startServer();
