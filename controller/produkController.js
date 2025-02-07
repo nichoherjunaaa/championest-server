@@ -1,6 +1,8 @@
 import Produk from "../models/produkModel.js";
 import asyncHandler from 'express-async-handler';
 import { body, validationResult } from 'express-validator';
+import { v2 as cloudinary } from 'cloudinary'
+import streamifier from 'streamifier'
 
 export const tambahProduk = asyncHandler(async (req, res) => {
     const errors = validationResult(req);
@@ -9,7 +11,7 @@ export const tambahProduk = asyncHandler(async (req, res) => {
     }
 
     const { nama, deskripsi, harga, stok } = req.body;
-
+    // console.log(req.body);
     try {
         const produk = await Produk.create({
             nama,
@@ -40,6 +42,8 @@ export const updateProduk = asyncHandler(async (req, res) => {
         produk.nama = nama ?? produk.nama;
         produk.harga = harga ?? produk.harga;
         produk.stok = stok ?? produk.stok;
+        produk.gambar = gambar ?? produk.gambar;
+        produk.deskripsi = deskripsi ?? produk.deskripsi;
 
         const updatedProduk = await produk.save();
         res.status(200).json({
@@ -82,6 +86,26 @@ export const getProduk = asyncHandler(async (req, res) => {
         throw new Error('Gagal mengambil produk');
     }
 });
+
+export const uploadDataProduct = asyncHandler(async (req, res) => {
+    const stream = cloudinary.uploader.upload_stream({
+        folder: "lomba",
+        allowed_formats: ['jpg', 'png', 'jpeg'],
+    },    
+        function (err, result) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'gagal upload gambar !',
+                    error: err
+                });
+            }
+            res.json({
+                message: 'Berhasil upload gambar!',
+                url: result.secure_url,
+            })
+        })
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+})
 
 export const validateProduk = [
     body('nama').notEmpty().withMessage('Nama produk wajib diisi'),

@@ -1,6 +1,10 @@
+// Dependencies
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
+import {v2 as cloudinary} from 'cloudinary'
+import mongoExpressSanitizer from 'express-mongo-sanitize';
 dotenv.config();
 
 
@@ -15,8 +19,17 @@ import orderRoute from './routes/orderRoute.js';
 // Middleware
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
-const app = express();
 
+const app = express();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
+app.use(helmet());
+app.use(mongoExpressSanitizer());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('/public'))
 app.use(express.json());
 app.use(cookieParser())
 
