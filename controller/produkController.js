@@ -75,16 +75,49 @@ export const deleteProduk = asyncHandler(async (req, res) => {
 });
 
 export const getProduk = asyncHandler(async (req, res) => {
-    try {
-        const produk = await Produk.find();
-        res.status(200).json({
-            status: 'success',
-            data: produk
-        });
-    } catch (error) {
-        res.status(500);
-        throw new Error('Gagal mengambil produk');
+    
+    const queryObj = { ...req.query }
+
+    const excludeFields = ['page', 'limit', 'nama']
+    excludeFields.forEach(el => delete queryObj[el])
+
+    let query
+
+    if (req.query.nama) {
+        query = Produk.find({
+            nama: { $regex: req.query.nama, $options: 'i' }
+        })
+    } else {
+        query = Produk.find(queryObj)
     }
+    // console.log(queryObj);
+
+    const page = req.query.page * 1 || 1
+    const limitData = req.query.limit * 1 || 3
+    const skipData = (page - 1) * limitData
+    query = query.skip(skipData).limit(limitData)
+
+    let countProducts = await Produk.countDocuments(queryObj)
+
+    if (req.query.page) {
+        if (skipData >= countProducts) {
+            res.status(404)
+            throw new Error('This page does not exist')
+        }
+    }
+
+    const data = await query
+    const totalPage = Math.ceil(countProducts / limitData)
+
+    res.status(200).json({
+        message: 'Success get all products',
+        data,
+        pagination : {
+            totalPage,
+            page,
+            totalProduct : countProducts
+        }
+    })
 });
 
 export const uploadDataProduct = asyncHandler(async (req, res) => {
