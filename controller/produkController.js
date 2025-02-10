@@ -140,6 +140,19 @@ export const uploadDataProduct = asyncHandler(async (req, res) => {
     streamifier.createReadStream(req.file.buffer).pipe(stream);
 })
 
+export const detailProduct = asyncHandler(async (req, res) => {
+    const paramsId = req.params.id
+    const product = await Produk.findById(paramsId)
+    if (!product) {
+        res.status(404)
+        throw new Error('Product not found')
+    }
+    res.status(200).json({
+        message: 'Detail Produk Success Get',
+        data: product
+    })
+})
+
 export const validateProduk = [
     body('nama').notEmpty().withMessage('Nama produk wajib diisi'),
     body('harga').isNumeric().withMessage('Harga harus berupa angka'),
