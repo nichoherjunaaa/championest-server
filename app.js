@@ -15,7 +15,7 @@ import dbConnection from './config/dbConnection.js';
 import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
 import orderRoute from './routes/orderRoute.js';
-
+import dokumentasiRoute from './routes/dokumentasiRoute.js';
 // Middleware
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
@@ -26,6 +26,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
+
 app.use(helmet());
 app.use(mongoExpressSanitizer());
 app.use(express.urlencoded({ extended: true }));
@@ -49,6 +50,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/product', productRoute);
 app.use('/api/v1/order', orderRoute);
+app.use('/api/v1/dokumentasi', dokumentasiRoute)
 
 // Middleware
 app.use(notFound);
