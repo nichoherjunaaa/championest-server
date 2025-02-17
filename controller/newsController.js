@@ -1,5 +1,7 @@
 import News from "../models/newsModel.js";
 import asyncHandler from 'express-async-handler';
+import streamifier from 'streamifier';
+import { v2 as cloudinary } from 'cloudinary';
 
 const createNews = asyncHandler(async (req, res) => {
     const { nama, deskripsi } = req.body;
@@ -74,4 +76,24 @@ const deleteNews = asyncHandler(async (req, res) => {
     }
 });
 
-export { createNews, getNews, updateNews, deleteNews };
+const uploadNews = asyncHandler(async (req, res) => {
+    const stream = cloudinary.uploader.upload_stream({
+        folder: "news",
+        allowed_formats: ['jpg', 'png', 'jpeg'],
+    }, function (err, result) {
+        if (err) {
+            return res.status(500).json({
+                message: 'gagal upload gambar !',
+                error: err
+            });
+        }
+        res.json({
+            message: 'Berhasil upload gambar!',
+            url: result.secure_url,
+        })
+    })
+    streamifier.createReadStream(req.file.buffer).pipe(stream);
+});
+
+
+export { createNews, getNews, updateNews, deleteNews, uploadNews };
