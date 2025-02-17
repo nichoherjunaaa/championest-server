@@ -16,6 +16,7 @@ import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
 import orderRoute from './routes/orderRoute.js';
 import dokumentasiRoute from './routes/dokumentasiRoute.js';
+import newsRoute from './routes/newsRoute.js'; 
 // Middleware
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
@@ -51,6 +52,7 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/product', productRoute);
 app.use('/api/v1/order', orderRoute);
 app.use('/api/v1/dokumentasi', dokumentasiRoute)
+app.use('/api/v1/news', newsRoute)
 
 // Middleware
 app.use(notFound);
